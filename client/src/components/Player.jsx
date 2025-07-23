@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { generateCode } from "../util/util";
 import { getSocket } from "../util/socket";
+import PlayerFrame from "./PlayerFrame";
 
 export default function Player() {
-  const id = generateCode();
+  const id = useMemo(generateCode, []);
   const socket = getSocket();
+  const [videoID, setVideoID] = useState(null);
 
   useEffect(() => {
     socket.on("sync-event", (data) => {
@@ -12,12 +14,30 @@ export default function Player() {
 
       switch (data.action) {
         case "test-player-id":
-          if (id === data.payload) {
-            socket.emit("sync-event", {
-              action: "test-player-id-ok",
-              payload: data.payload,
-            });
+          if (id !== data.payload) {
+            return;
           }
+
+          socket.emit("sync-event", {
+            action: "test-player-id-ok",
+            payload: data.payload,
+          });
+          break;
+        case "play-item":
+          if (id !== data.payload.playerID) {
+            return;
+          }
+
+          socket.emit("sync-event", {
+            action: "playing-item",
+            payload: {
+              playerID: data.payload.playerID,
+              videoID: data.payload.videoID,
+            },
+          });
+
+          setVideoID(data.payload.videoID);
+
           break;
       }
     });
@@ -27,5 +47,12 @@ export default function Player() {
     };
   }, []);
 
-  return <div>Player ID {id}</div>;
+  return (
+    <div>
+      Player ID {id}
+      <div>
+        {videoID ? <PlayerFrame videoID={videoID} /> : <p>No video playing.</p>}
+      </div>
+    </div>
+  );
 }

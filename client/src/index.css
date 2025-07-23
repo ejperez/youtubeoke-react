@@ -3,3 +3,11 @@
 .main-button {
   @apply cursor-pointer p-2 border-2;
 }
+
+button {
+  @apply cursor-pointer p-1 border-1;
+}
+
+input {
+  @apply border-1;
+}
