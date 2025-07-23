@@ -6,7 +6,7 @@ const decodeEntity = (inputStr) => {
 
 const search = async (keyword) => {
   const backendAPI = import.meta.env.VITE_YT_API_URL || "http://localhost:3030";
-  const request = await fetch(`${backendAPI}${keyword}`);
+  const request = await fetch(`${backendAPI}/${keyword}`);
   const data = await request.json();
   let items = [];
 
