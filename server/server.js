@@ -3,23 +3,23 @@ const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Use specific origin in production
+    origin: process.env.ALLOWED_ORIGINS || "*",
     methods: ["GET"],
   },
 });
 
 app.use(cors());
 
-// Serve React static files in production
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
 app.get(/(.*)/, (_, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+  res.send("It works!");
 });
 
 // Web Socket connection
