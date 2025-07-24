@@ -12,6 +12,8 @@ const server = http.createServer(app);
 app.use(cors());
 dotenv.config();
 
+console.log("Allowed origins", process.env.ALLOWED_ORIGINS || "*");
+
 const io = new Server(server, {
   cors: {
     origin: process.env.ALLOWED_ORIGINS || "*",
