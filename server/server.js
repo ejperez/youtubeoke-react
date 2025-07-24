@@ -18,14 +18,16 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-const io = new Server(server, { cors: corsOptions });
-
-// Endpoint for searching YouTube
 const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 60,
 });
 
+app.use(limiter);
+
+const io = new Server(server, { cors: corsOptions });
+
+// Endpoint for searching YouTube
 app.get("/", (_, res) => {
   res.send({
     status: "up",
@@ -33,15 +35,39 @@ app.get("/", (_, res) => {
   });
 });
 
+const LIMIT = 100;
+const filterVideos = (items) => {
+  return items.filter((item) => item.type === "video");
+};
+
 app.get("/api/search/:q", limiter, async (req, res) => {
   const data = await youtubesearchapi.GetListByKeyword(
     req.params.q,
     false,
-    100,
+    LIMIT,
     [{ type: "video" }]
   );
 
-  res.send(data);
+  const items = [...filterVideos(data.items)];
+  let hasNextPage = "nextPage" in data;
+  let currentData = data;
+
+  while (hasNextPage && items.length < LIMIT) {
+    const nextData = await youtubesearchapi.NextPage(currentData.nextPage);
+
+    if (!Array.isArray(nextData.items)) {
+      break;
+    }
+
+    filterVideos(nextData.items).forEach((item) => {
+      items.push(item);
+    });
+
+    hasNextPage = "nextPage" in nextData;
+    currentData = nextData;
+  }
+
+  res.send(items);
 });
 
 // Web Socket connection

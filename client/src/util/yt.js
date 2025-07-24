@@ -10,8 +10,8 @@ const search = async (keyword) => {
   const data = await request.json();
   let items = [];
 
-  if ("items" in data && data.items.length > 0) {
-    items = data.items.map((item) => {
+  if ("items" in data && data.length > 0) {
+    items = data.map((item) => {
       return {
         id: item?.id,
         title: decodeEntity(item?.title),

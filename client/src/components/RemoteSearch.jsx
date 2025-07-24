@@ -56,7 +56,7 @@ export default function RemoteSearch({ onPlay, onFavorite }) {
                     onPlay(item.id);
                   }}
                 >
-                  <img src={item.image} className="w-full" loading="lazy" />
+                  <img src={item.image} className="w-full" loading="lazy" width="360" height="202"/>
                 </button>
                 <p>{item.title}</p>
                 <em>{item.channel}</em>
