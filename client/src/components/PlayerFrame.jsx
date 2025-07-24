@@ -13,22 +13,12 @@ export default function PlayerFrame({ videoID }) {
     },
   };
 
-  const func = (e) => {
-    console.log(e.target);
-  };
-
   return (
     <YouTube
       className="w-screen h-screen"
       videoId={videoID}
       opts={opts}
       iframeClassName="h-full w-full"
-      onReady={func}
-      onPlay={func}
-      onPause={func}
-      onEnd={func}
-      onError={func}
-      onStateChange={func}
     />
   );
 }

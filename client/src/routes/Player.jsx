@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { generateCode } from "../util/util";
 import { getSocket } from "../util/socket";
-import PlayerFrame from "./PlayerFrame";
+import PlayerFrame from "../components/PlayerFrame";
+import PlayerHome from "../components/PlayerHome";
 
 export default function Player() {
   const id = useMemo(generateCode, []);
@@ -13,16 +14,6 @@ export default function Player() {
       console.log(data);
 
       switch (data.action) {
-        case "test-player-id":
-          if (id !== data.payload) {
-            return;
-          }
-
-          socket.emit("sync-event", {
-            action: "test-player-id-ok",
-            payload: data.payload,
-          });
-          break;
         case "play-item":
           if (id !== data.payload.playerID) {
             return;
@@ -47,11 +38,9 @@ export default function Player() {
     };
   }, []);
 
-  return (
-    <div>      
-      <div>
-        {videoID ? <PlayerFrame videoID={videoID} /> : <p>Player ID: {id}. Waiting for remote...</p>}
-      </div>
-    </div>
+  return videoID ? (
+    <PlayerFrame videoID={videoID} />
+  ) : (
+    <PlayerHome playerID={id} />
   );
 }
