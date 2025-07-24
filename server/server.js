@@ -9,17 +9,16 @@ const youtubesearchapi = require("youtube-search-api");
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
 dotenv.config();
 
-console.log("Allowed origins", process.env.ALLOWED_ORIGINS || "*");
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGINS || "*",
+  methods: ["GET"],
+};
 
-const io = new Server(server, {
-  cors: {
-    origin: process.env.ALLOWED_ORIGINS || "*",
-    methods: ["GET"],
-  },
-});
+app.use(cors(corsOptions));
+
+const io = new Server(server, { cors: corsOptions });
 
 // Endpoint for searching YouTube
 const limiter = rateLimit({
