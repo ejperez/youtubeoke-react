@@ -5,6 +5,7 @@ const path = require("path");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
+const youtubesearchapi = require("youtube-search-api");
 
 const app = express();
 const server = http.createServer(app);
@@ -19,9 +20,6 @@ const io = new Server(server, {
   },
 });
 
-const apiKey = process.env.YOUTUBE_DATA_API_KEY || false;
-const maxResults = process.env.YOUTUBE_DATA_API_MAX_RESULTS || 50;
-
 // Serve React static files in production
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
@@ -32,14 +30,12 @@ const limiter = rateLimit({
 });
 
 app.get("/api/search/:q", limiter, async (req, res) => {
-  if (!apiKey) {
-    res.sendStatus(500);
-  }
-
-  const q = encodeURIComponent(req.params.q);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${q}&type=video&key=${apiKey}`;
-  const response = await fetch(url);
-  const data = await response.json();
+  const data = await youtubesearchapi.GetListByKeyword(
+    req.params.q,
+    false,
+    100,
+    [{ type: "video" }]
+  );
 
   res.send(data);
 });

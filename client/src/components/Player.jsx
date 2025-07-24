@@ -48,10 +48,9 @@ export default function Player() {
   }, []);
 
   return (
-    <div>
-      Player ID {id}
+    <div>      
       <div>
-        {videoID ? <PlayerFrame videoID={videoID} /> : <p>No video playing.</p>}
+        {videoID ? <PlayerFrame videoID={videoID} /> : <p>Player ID: {id}. Waiting for remote...</p>}
       </div>
     </div>
   );

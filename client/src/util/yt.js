@@ -13,10 +13,10 @@ const search = async (keyword) => {
   if ("items" in data && data.items.length > 0) {
     items = data.items.map((item) => {
       return {
-        id: item.id.videoId,
-        title: decodeEntity(item.snippet.title),
-        channel: item.snippet.channelTitle,
-        image: item.snippet.thumbnails.medium.url,
+        id: item?.id,
+        title: decodeEntity(item?.title),
+        channel: item.channelTitle,
+        image: item.thumbnail.thumbnails.shift()?.url,
       };
     });
   }
