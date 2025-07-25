@@ -20,7 +20,7 @@
 
 @theme {
   --font-heading: "Bitcount Prop Single", system-ui;
-  --font-text: Roboto, sans-serif;  
+  --font-text: Roboto, sans-serif;
 }
 
 body {
@@ -35,4 +35,37 @@ button {
 
 input {
   color: #000;
+}
+
+button:active {
+  transform: scale(1.1);
+  transition-property: all;
+  transition-duration: 50ms;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Full viewport height */
+}
+
+/* Define the keyframes for the spinning animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Define the styles for the loading icon */
+.loading-icon {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }

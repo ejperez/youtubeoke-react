@@ -5,6 +5,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
 const youtubesearchapi = require("youtube-search-api");
+const { readFileSync } = require("fs");
 
 const app = express();
 const server = http.createServer(app);
@@ -66,6 +67,14 @@ app.get("/api/search/:q", limiter, async (req, res) => {
     hasNextPage = "nextPage" in nextData;
     currentData = nextData;
   }
+
+  res.send(items);
+});
+
+app.get("/test/api/search/:q", async (_, res) => {
+  const items = readFileSync("sample.json");
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   res.send(items);
 });

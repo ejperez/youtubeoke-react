@@ -1,22 +1,8 @@
-import { useState, useEffect } from "react";
 import { search } from "../util/yt";
+import { useLoaderData } from "react-router";
 
 export default function RemoteSearch({ onPlay, onFavorite }) {
-  const [keyword, setKeyword] = useState("karaoke");
-  const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    async function getData() {
-      setIsLoading(true);
-
-      const items = await search(keyword);
-
-      setItems(items);
-      setIsLoading(false);
-    }
-    getData();
-  }, [keyword]);
+  const items = useLoaderData();
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
@@ -31,64 +17,66 @@ export default function RemoteSearch({ onPlay, onFavorite }) {
   };
 
   return (
-    <div>
-      <form onSubmit={formSubmitHandler} className="fixed w-full p-2">
-        <input
-          className="w-full bg-white p-3 rounded-full border-1"
-          name="keyword"
-          type="text"
-          placeholder="Search YouTube"
-        />
-      </form>
-
-      <div className="p-2 pt-16">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : items.length === 0 ? (
-          <p>No results.</p>
-        ) : (
-          <>
-            <ul className="flex flex-wrap gap-2">
-              {items.map((item) => (
-                <li
-                  className="flex-auto w-full sm:w-1/3 md:w-1/5 p-2 bg-white/25 rounded-2xl"
-                  key={item.id}
+    <div className="p-2 pt-16">
+      {items.length === 0 ? (
+        <p>No results.</p>
+      ) : (
+        <>
+          <ul className="flex flex-col gap-2">
+            {items.map((item) => (
+              <li key={item.id + item.image}>
+                <button
+                  className="relative flex gap-2 p-2 bg-white/20"
+                  type="button"
+                  onClick={() => {
+                    onPlay(item.id);
+                  }}
                 >
-                  <button
-                    type="button"
-                    className="w-full"
-                    onClick={() => {
-                      onPlay(item.id);
-                    }}
-                  >
+                  <div className="w-1/2">
                     <img
                       src={item.image}
-                      className="w-full rounded-2xl"
+                      className="w-full"
                       loading="lazy"
                       width="360"
                       height="202"
                       alt={item.title}
                     />
-                  </button>
-                  <p className="font-custom font-bold">{item.title}</p>
-                  <em className="font-bit">{item.channel}</em>
-                  {/* <div>
-                  <button
+                  </div>
+                  <div className="w-1/2 text-left">
+                    <p className="line-clamp-2 font-text font-bold">
+                      {item.title}
+                    </p>
+                    <em className="text-xs">{item.channel}</em>
+                  </div>
+                  {/* <button
                     type="button"
                     onClick={() => {
                       onFavorite(item.id);
                     }}
+                    title="Save to favorites"
+                    className="absolute bg-white text-black font-bold rounded-full w-10 bottom-2 right-2"
                   >
-                    Favorite
-                  </button>
-                </div> */}
-                </li>
-              ))}
-            </ul>
-            <button className="w-full p-2 bg-white/25 mt-2 rounded-2xl" type="button">Load more</button>
-          </>
-        )}
-      </div>
+                    ...
+                  </button> */}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
+            type="button"
+          >
+            Load more
+          </button>
+        </>
+      )}
     </div>
   );
+}
+
+export async function loader({ request }) {
+  const [, searchParams] = request.url.split("?");
+  const keyword = new URLSearchParams(searchParams).get("keyword");
+
+  return await search(keyword);
 }

@@ -29,7 +29,7 @@ export default function PlayerHome({ playerID }) {
         loop
         muted
       >
-        <source src="/public/video.mp4" type="video/mp4" />
+        <source src="/video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </header>
