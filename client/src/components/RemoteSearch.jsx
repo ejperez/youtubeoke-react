@@ -47,32 +47,46 @@ export default function RemoteSearch({ onPlay, onFavorite }) {
         ) : items.length === 0 ? (
           <p>No results.</p>
         ) : (
-          <ul className="flex gap-2 flex-col">
-            {items.map((item) => (
-              <li className="border-1 p-2 rounded-2xl" key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onPlay(item.id);
-                  }}
+          <>
+            <ul className="flex flex-wrap gap-2">
+              {items.map((item) => (
+                <li
+                  className="flex-auto w-full sm:w-1/3 md:w-1/5 p-2 bg-white/25 rounded-2xl"
+                  key={item.id}
                 >
-                  <img src={item.image} className="w-full" loading="lazy" width="360" height="202"/>
-                </button>
-                <p>{item.title}</p>
-                <em>{item.channel}</em>
-                <div>
-                  {/* <button
+                  <button
+                    type="button"
+                    className="w-full"
+                    onClick={() => {
+                      onPlay(item.id);
+                    }}
+                  >
+                    <img
+                      src={item.image}
+                      className="w-full rounded-2xl"
+                      loading="lazy"
+                      width="360"
+                      height="202"
+                      alt={item.title}
+                    />
+                  </button>
+                  <p className="font-custom font-bold">{item.title}</p>
+                  <em className="font-bit">{item.channel}</em>
+                  {/* <div>
+                  <button
                     type="button"
                     onClick={() => {
                       onFavorite(item.id);
                     }}
                   >
                     Favorite
-                  </button> */}
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </button>
+                </div> */}
+                </li>
+              ))}
+            </ul>
+            <button className="w-full p-2 bg-white/25 mt-2 rounded-2xl" type="button">Load more</button>
+          </>
         )}
       </div>
     </div>

@@ -5,12 +5,33 @@ export default function PlayerHome({ playerID }) {
   const remoteLink = `${document.location.href}${playerID}/remote`;
 
   return (
-    <div>
-      <h1>Welcome to YoutubeOKE</h1>
-      <p>Scan the QR code using your phone to play songs.</p>
-      <Link to={remoteLink} target="_blank" title="Click to open in a new tab">
-        <QRCode value={remoteLink} />
-      </Link>
-    </div>
+    <header className="fixed flex flex-col h-full w-full justify-center items-center">
+      <div className="z-2 text-center p-2">
+        <h1 className="text-center font-heading text-7xl">
+          Welcome to YoutubeOKE
+        </h1>
+        <p className="mt-2">
+          Scan the QR code below using your phone to play songs.
+        </p>
+        <p className="mt-8 flex justify-center">
+          <Link
+            to={remoteLink}
+            target="_blank"
+            title="Click to open in a new tab"
+          >
+            <QRCode className="p-2 rounded-xl bg-white" value={remoteLink} />
+          </Link>
+        </p>
+      </div>
+      <video
+        className="absolute top-[-100px] w-auto min-w-full min-h-[120%] max-w-none opacity-50"
+        autoPlay
+        loop
+        muted
+      >
+        <source src="/public/video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </header>
   );
 }

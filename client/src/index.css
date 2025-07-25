@@ -1,5 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&display=swap");
+
 @import "tailwindcss";
+
+@font-face {
+  font-family: Roboto;
+  font-display: swap;
+  src: url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+}
+
+@font-face {
+  font-family: "Bitcount Prop Single", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+  font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
+  src: url("https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&display=swap");
+}
+
+@theme {
+  --font-heading: "Bitcount Prop Single", system-ui;
+  --font-text: Roboto, sans-serif;  
+}
+
+body {
+  @apply font-text;
+  background-color: #000;
+  color: #fff;
+}
 
 button {
   @apply cursor-pointer;
+}
+
+input {
+  color: #000;
 }
