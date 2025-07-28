@@ -39,10 +39,9 @@ input {
 }
 
 button:active {
-  transform: scale(1.1);
   transition-property: all;
-  transition-duration: 50ms;
-  /* @apply bg-white text-black; */
+  transition-duration: 100ms;
+  outline: solid 2px white;
 }
 
 .loading-icon {

@@ -17,7 +17,7 @@ export default function PlayerHome({ playerID }) {
           <Link
             to={remoteLink}
             target="_blank"
-            title="Click to open in a new tab"
+            title={`Click to open in a new tab (Player ID: ${playerID})`}
           >
             <QRCode className="p-2 rounded-xl bg-white" value={remoteLink} />
           </Link>

@@ -13,6 +13,7 @@ const mapFields = (items) =>
       title: decodeEntity(item?.title),
       channel: item.channelTitle,
       image: item.thumbnail.thumbnails.shift()?.url,
+      length: item.length.simpleText,
     };
   });
 

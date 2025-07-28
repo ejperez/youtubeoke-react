@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { search, getNextPage } from "../util/yt";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import { SpinnerIcon } from "./Loader";
+import Modal from "./Modal";
+import ListItem from "./ListItem";
+import { getSocket } from "../util/socket";
 
-export default function RemoteSearch({ onPlay, onFavorite }) {
+export default function RemoteSearch() {
   const [page, setPage] = useState(1);
   const { items, hasNextPage } = useLoaderData();
   const [currentItems, setCurrentItems] = useState(items);
   const [currentHasNextPage, setCurrentHasNextPage] = useState(hasNextPage);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const socket = getSocket();
+  const { playerID } = useParams();
 
   useEffect(() => {
     if (page === 1) {
@@ -29,66 +35,98 @@ export default function RemoteSearch({ onPlay, onFavorite }) {
     fetchData();
   }, [page]);
 
-  return (
-    <div className="p-2 pt-16">
-      {currentItems.length === 0 ? (
-        <p>No results.</p>
-      ) : (
-        <>
-          <ul className="flex flex-col gap-2">
-            {currentItems
-              .filter(
-                (obj, index, self) =>
-                  index === self.findIndex((o) => o.id === obj.id)
-              )
-              .map((item) => (
-                <li
-                  key={item.id + item.image}
-                  style={{ backgroundImage: `url(${item.image})` }}
-                  className="bg-cover relative rounded-2xl"
-                >
-                  <div class="backdrop-blur-sm backdrop-brightness-50 absolute top-0 left-0 w-full h-full rounded-2xl"></div>
-                  <button
-                    className="relative flex gap-2 p-2 bg-white/20 w-full rounded-2xl"
-                    type="button"
-                    onClick={() => {
-                      onPlay(item.id);
-                    }}
-                  >
-                    <div className="w-1/2">
-                      <img
-                        src={item.image}
-                        className="w-full"
-                        loading="lazy"
-                        width="360"
-                        height="202"
-                        alt={item.title}
-                      />
-                    </div>
-                    <div className="w-1/2 text-left">
-                      <p className="line-clamp-2 font-text font-bold">
-                        {item.title}
-                      </p>
-                      <em className="text-xs">{item.channel}</em>
-                    </div>
-                  </button>
-                </li>
-              ))}
-          </ul>
+  const modalPlayHandler = (e) => {
+    e.stopPropagation();
 
-          {currentHasNextPage && (
+    socket.emit("sync-event", {
+      action: "play-item",
+      payload: {
+        playerID: playerID,
+        videoID: selectedVideo,
+      },
+    });
+
+    setSelectedVideo(null);
+  };
+
+  const listClickHandler = (id) => {
+    setSelectedVideo(id);
+  };
+
+  const modalCancelHandler = (e) => {
+    e.stopPropagation();
+    setSelectedVideo(null);
+  };
+
+  const modalAddToFavesHandler = (e) => {
+    e.stopPropagation();
+    setSelectedVideo(null);
+  };
+
+  const menuOptions = [
+    {
+      label: "Play",
+      action: modalPlayHandler,
+    },
+    {
+      label: "Add to favorites",
+      action: modalAddToFavesHandler,
+    },
+    { label: "Cancel", action: modalCancelHandler },
+  ];
+
+  return (
+    <>
+      {selectedVideo && (
+        <Modal closeHandler={modalCancelHandler}>
+          {menuOptions.map((item) => (
             <button
-              className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
-              type="button"
-              onClick={() => setPage((page) => page + 1)}
-              disabled={isLoading}
+              key={item.label}
+              onClick={item.action}
+              className="bg-white text-black px-4 py-2 rounded-full leading-10"
             >
-              {isLoading ? <SpinnerIcon inline={true} /> : "Load more"}
+              {item.label}
             </button>
-          )}
-        </>
+          ))}
+        </Modal>
       )}
-    </div>
+
+      <div className="p-2 pt-16">
+        {currentItems.length === 0 ? (
+          <p>No results.</p>
+        ) : (
+          <>
+            <ul className="flex flex-col gap-2">
+              {currentItems
+                .filter(
+                  (obj, index, self) =>
+                    index === self.findIndex((o) => o.id === obj.id)
+                )
+                .map((item) => (
+                  <li
+                    key={item.id + item.image}
+                    style={{ backgroundImage: `url(${item.image})` }}
+                    className="bg-cover relative rounded-2xl"
+                  >
+                    <ListItem clickHandler={listClickHandler} item={item} />
+                  </li>
+                ))}
+            </ul>
+
+            {currentHasNextPage && (
+              <button
+                className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
+                type="button"
+                onClick={() => setPage((page) => page + 1)}
+                disabled={isLoading}
+              >
+                {isLoading ? <SpinnerIcon inline={true} /> : "Load more"}
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
