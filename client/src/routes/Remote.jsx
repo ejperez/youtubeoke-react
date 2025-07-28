@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { getSocket } from "../util/socket";
 import { Outlet } from "react-router";
 import { Form } from "react-router";
@@ -6,7 +6,9 @@ import Loader from "../components/Loader";
 
 export default function Remote() {
   const { playerID } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const socket = getSocket();
+  const keyword = searchParams.get("keyword");
 
   const playHandler = (videoID) => {
     socket.emit("sync-event", {
@@ -30,6 +32,7 @@ export default function Remote() {
           name="keyword"
           type="text"
           placeholder="Search YouTube"
+          defaultValue={keyword}
           required
         />
       </Form>

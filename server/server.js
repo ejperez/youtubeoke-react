@@ -5,7 +5,6 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
 const youtubesearchapi = require("youtube-search-api");
-const { readFileSync } = require("fs");
 
 const app = express();
 const server = http.createServer(app);
@@ -24,22 +23,35 @@ const limiter = rateLimit({
   max: 60,
 });
 
-app.use(limiter);
+app.use(express.json());
 
 const io = new Server(server, { cors: corsOptions });
 
-// Endpoint for searching YouTube
+// Endpoints for searching YouTube
+const LIMIT = 100;
+const blockedChannels = process.env.BLOCKED_CHANNELS || [];
+
+const filterVideos = (items) => {
+  return items
+    .filter((item) => item.type === "video")
+    .filter((item) => !blockedChannels.includes(item.channelTitle));
+};
+
+const processResponse = (data, res) => {
+  const items = [...filterVideos(data.items)];
+
+  res.send({
+    items: items,
+    nextPage: data?.nextPage,
+  });
+};
+
 app.get("/", (_, res) => {
   res.send({
     status: "up",
     datetime: new Date(),
   });
 });
-
-const LIMIT = 100;
-const filterVideos = (items) => {
-  return items.filter((item) => item.type === "video");
-};
 
 app.get("/api/search/:q", limiter, async (req, res) => {
   const data = await youtubesearchapi.GetListByKeyword(
@@ -49,34 +61,13 @@ app.get("/api/search/:q", limiter, async (req, res) => {
     [{ type: "video" }]
   );
 
-  const items = [...filterVideos(data.items)];
-  let hasNextPage = "nextPage" in data;
-  let currentData = data;
-
-  while (hasNextPage && items.length < LIMIT) {
-    const nextData = await youtubesearchapi.NextPage(currentData.nextPage);
-
-    if (!Array.isArray(nextData.items)) {
-      break;
-    }
-
-    filterVideos(nextData.items).forEach((item) => {
-      items.push(item);
-    });
-
-    hasNextPage = "nextPage" in nextData;
-    currentData = nextData;
-  }
-
-  res.send(items);
+  return processResponse(data, res);
 });
 
-app.get("/test/api/search/:q", async (_, res) => {
-  const items = readFileSync("sample.json");
+app.post("/api/search/nextPage", limiter, async (req, res) => {
+  const data = await youtubesearchapi.NextPage(req.body.nextPage, false, LIMIT);
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  res.send(items);
+  return processResponse(data, res);
 });
 
 // Web Socket connection
