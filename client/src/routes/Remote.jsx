@@ -30,6 +30,7 @@ export default function Remote() {
           name="keyword"
           type="text"
           placeholder="Search YouTube"
+          required
         />
       </Form>
 

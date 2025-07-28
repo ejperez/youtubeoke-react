@@ -43,13 +43,6 @@ button:active {
   transition-duration: 50ms;
 }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%; /* Full viewport height */
-}
-
 /* Define the keyframes for the spinning animation */
 @keyframes spin {
   from {
