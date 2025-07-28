@@ -4,18 +4,6 @@ import { useLoaderData } from "react-router";
 export default function RemoteSearch({ onPlay, onFavorite }) {
   const items = useLoaderData();
 
-  const formSubmitHandler = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const keyword = formData.get("keyword");
-
-    if (!keyword) {
-      return;
-    }
-
-    setKeyword(formData.get("keyword"));
-  };
-
   return (
     <div className="p-2 pt-16">
       {items.length === 0 ? (
@@ -48,16 +36,6 @@ export default function RemoteSearch({ onPlay, onFavorite }) {
                     </p>
                     <em className="text-xs">{item.channel}</em>
                   </div>
-                  {/* <button
-                    type="button"
-                    onClick={() => {
-                      onFavorite(item.id);
-                    }}
-                    title="Save to favorites"
-                    className="absolute bg-white text-black font-bold rounded-full w-10 bottom-2 right-2"
-                  >
-                    ...
-                  </button> */}
                 </button>
               </li>
             ))}

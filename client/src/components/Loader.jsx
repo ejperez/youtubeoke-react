@@ -2,7 +2,7 @@ import { useNavigation } from "react-router";
 
 export function Spinner() {
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="fixed flex justify-center items-center h-full w-full">
       <div className="loading-icon"></div>
     </div>
   );
