@@ -20,13 +20,14 @@
 
 @theme {
   --font-heading: "Bitcount Prop Single", system-ui;
-  --font-text: Roboto, sans-serif;  
+  --font-text: Roboto, sans-serif;
 }
 
 body {
   @apply font-text;
   background-color: #000;
   color: #fff;
+  user-select: none;
 }
 
 button {
@@ -35,4 +36,26 @@ button {
 
 input {
   color: #000;
+}
+
+li.active {
+  outline: solid 2px white;
+}
+
+.loading-icon {
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  background-image: url("/logo_trans.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

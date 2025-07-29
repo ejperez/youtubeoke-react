@@ -7,7 +7,7 @@ export default function PlayerHome({ playerID }) {
   return (
     <header className="fixed flex flex-col h-full w-full justify-center items-center">
       <div className="z-2 text-center p-2">
-        <h1 className="text-center font-heading text-7xl">
+        <h1 className="text-center font-heading lg:text-7xl md:text-5xl text-4xl">
           Welcome to YoutubeOKE
         </h1>
         <p className="mt-2">
@@ -17,7 +17,7 @@ export default function PlayerHome({ playerID }) {
           <Link
             to={remoteLink}
             target="_blank"
-            title="Click to open in a new tab"
+            title={`Click to open in a new tab (Player ID: ${playerID})`}
           >
             <QRCode className="p-2 rounded-xl bg-white" value={remoteLink} />
           </Link>
@@ -29,7 +29,7 @@ export default function PlayerHome({ playerID }) {
         loop
         muted
       >
-        <source src="/public/video.mp4" type="video/mp4" />
+        <source src="/video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </header>

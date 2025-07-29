@@ -23,11 +23,11 @@ export default function Player() {
             action: "playing-item",
             payload: {
               playerID: data.payload.playerID,
-              videoID: data.payload.videoID,
+              videoID: data.payload.video.id,
             },
           });
 
-          setVideoID(data.payload.videoID);
+          setVideoID(data.payload.video.id);
 
           break;
       }

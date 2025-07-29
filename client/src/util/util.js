@@ -1,4 +1,4 @@
-const generateCode = () => {
+export const generateCode = () => {
   const chars = "0123456789";
   let code = "";
   for (let i = 0; i < 5; i++) {
@@ -8,4 +8,8 @@ const generateCode = () => {
   return code;
 };
 
-export { generateCode };
+export const decodeEntity = (inputStr) => {
+  var textarea = document.createElement("textarea");
+  textarea.innerHTML = inputStr;
+  return textarea.value;
+};
