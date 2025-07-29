@@ -1,56 +1,42 @@
-import { useEffect, useState } from "react";
-import { search, getNextPage } from "../util/yt";
-import { useLoaderData, useParams } from "react-router";
+import { useState } from "react";
+import { search, getNextPage, playVideo } from "../util/yt";
+import { addToFavorites } from "../util/faves";
+import {
+  useLoaderData,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router";
 import { SpinnerIcon } from "./Loader";
-import Modal from "./Modal";
 import ListItem from "./ListItem";
-import { getSocket } from "../util/socket";
+import ModalMenu from "./ModalMenu";
 
 export default function RemoteSearch() {
-  const [page, setPage] = useState(1);
   const { items, hasNextPage } = useLoaderData();
+  const { playerID } = useParams();
+
+  const navigate = useNavigate();
+  const { clearKeyword } = useOutletContext();
+
   const [currentItems, setCurrentItems] = useState(items);
   const [currentHasNextPage, setCurrentHasNextPage] = useState(hasNextPage);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const socket = getSocket();
-  const { playerID } = useParams();
 
-  useEffect(() => {
-    if (page === 1) {
-      return;
-    }
-
-    async function fetchData() {
-      const { items, hasNextPage } = await getNextPage();
-
-      setCurrentItems((currentItems) => {
-        return [...currentItems, ...items];
-      });
-      setCurrentHasNextPage(hasNextPage);
-      setIsLoading(false);
-    }
-
+  const loadMoreHandler = async () => {
     setIsLoading(true);
-    fetchData();
-  }, [page]);
 
-  const modalPlayHandler = (e) => {
-    e.stopPropagation();
+    const { items, hasNextPage } = await getNextPage();
 
-    socket.emit("sync-event", {
-      action: "play-item",
-      payload: {
-        playerID: playerID,
-        videoID: selectedVideo,
-      },
+    setCurrentItems((currentItems) => {
+      return [...currentItems, ...items];
     });
-
-    setSelectedVideo(null);
+    setCurrentHasNextPage(hasNextPage);
+    setIsLoading(false);
   };
 
-  const listClickHandler = (id) => {
-    setSelectedVideo(id);
+  const listClickHandler = (item) => {
+    setSelectedVideo(item);
   };
 
   const modalCancelHandler = (e) => {
@@ -58,44 +44,53 @@ export default function RemoteSearch() {
     setSelectedVideo(null);
   };
 
-  const modalAddToFavesHandler = (e) => {
-    e.stopPropagation();
-    setSelectedVideo(null);
-  };
-
   const menuOptions = [
     {
       label: "Play",
-      action: modalPlayHandler,
+      action: (e) => {
+        e.stopPropagation();
+
+        playVideo(playerID, selectedVideo);
+        setSelectedVideo(null);
+      },
     },
     {
       label: "Add to favorites",
-      action: modalAddToFavesHandler,
+      action: async (e) => {
+        e.stopPropagation();
+
+        await addToFavorites(selectedVideo);
+
+        setSelectedVideo(null);
+      },
     },
-    { label: "Cancel", action: modalCancelHandler },
+    {
+      label: "Cancel",
+      action: modalCancelHandler,
+    },
   ];
+
+  const favoritesClickHandler = () => {
+    clearKeyword();
+    navigate(`/${playerID}/remote`);
+  };
 
   return (
     <>
       {selectedVideo && (
-        <Modal closeHandler={modalCancelHandler}>
-          {menuOptions.map((item) => (
-            <button
-              key={item.label}
-              onClick={item.action}
-              className="bg-white text-black px-4 py-2 rounded-full leading-10"
-            >
-              {item.label}
-            </button>
-          ))}
-        </Modal>
+        <ModalMenu
+          modalCancelHandler={modalCancelHandler}
+          menuOptions={menuOptions}
+        />
       )}
 
-      <div className="p-2 pt-16">
+      <div className="px-2 pb-2">
         {currentItems.length === 0 ? (
           <p>No results.</p>
         ) : (
           <>
+            <div className="text-center pb-2">Search results</div>
+
             <ul className="flex flex-col gap-2">
               {currentItems
                 .filter(
@@ -103,13 +98,12 @@ export default function RemoteSearch() {
                     index === self.findIndex((o) => o.id === obj.id)
                 )
                 .map((item) => (
-                  <li
-                    key={item.id + item.image}
-                    style={{ backgroundImage: `url(${item.image})` }}
-                    className="bg-cover relative rounded-2xl"
-                  >
-                    <ListItem clickHandler={listClickHandler} item={item} />
-                  </li>
+                  <ListItem
+                    key={item.id}
+                    clickHandler={listClickHandler}
+                    item={item}
+                    isActive={item.id === selectedVideo?.id}
+                  />
                 ))}
             </ul>
 
@@ -117,12 +111,20 @@ export default function RemoteSearch() {
               <button
                 className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
                 type="button"
-                onClick={() => setPage((page) => page + 1)}
+                onClick={loadMoreHandler}
                 disabled={isLoading}
               >
                 {isLoading ? <SpinnerIcon inline={true} /> : "Load more"}
               </button>
             )}
+
+            <button
+              type="button"
+              className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
+              onClick={favoritesClickHandler}
+            >
+              Back to favorites
+            </button>
           </>
         )}
       </div>

@@ -1,10 +1,8 @@
-const backendAPI = import.meta.env.VITE_YT_API_URL || "http://localhost:3030";
+import { getSocket } from "./socket";
+import { decodeEntity } from "./util";
 
-const decodeEntity = (inputStr) => {
-  var textarea = document.createElement("textarea");
-  textarea.innerHTML = inputStr;
-  return textarea.value;
-};
+const backendAPI = import.meta.env.VITE_YT_API_URL || "http://localhost:3030";
+const socket = getSocket();
 
 const mapFields = (items) =>
   items.map((item) => {
@@ -25,15 +23,13 @@ const processResponse = (data) => {
     items = mapFields(data.items);
   }
 
-  if ("sessionStorage" in window) {
-    if (hasNextPage) {
-      sessionStorage.setItem(
-        "nextPage",
-        JSON.stringify({ nextPage: data.nextPage })
-      );
-    } else {
-      sessionStorage.removeItem("nextPage");
-    }
+  if (hasNextPage) {
+    sessionStorage.setItem(
+      "nextPage",
+      JSON.stringify({ nextPage: data.nextPage })
+    );
+  } else {
+    sessionStorage.removeItem("nextPage");
   }
 
   return {
@@ -42,20 +38,15 @@ const processResponse = (data) => {
   };
 };
 
-const search = async (keyword) => {
+export const search = async (keyword) => {
   const request = await fetch(`${backendAPI}/search/${keyword}`);
   const data = await request.json();
 
   return processResponse(data);
 };
 
-const getNextPage = async () => {
+export const getNextPage = async () => {
   const defaultResponse = { items: [], hasNextPage: false };
-
-  if (!("sessionStorage" in window)) {
-    return defaultResponse;
-  }
-
   const nextPage = sessionStorage.getItem("nextPage");
 
   if (!nextPage) {
@@ -74,4 +65,12 @@ const getNextPage = async () => {
   return processResponse(data);
 };
 
-export { search, getNextPage };
+export const playVideo = (playerID, video) => {
+  socket.emit("sync-event", {
+    action: "play-item",
+    payload: {
+      playerID: playerID,
+      video: video,
+    },
+  });
+};

@@ -38,9 +38,7 @@ input {
   color: #000;
 }
 
-button:active {
-  transition-property: all;
-  transition-duration: 100ms;
+li.active {
   outline: solid 2px white;
 }
 

@@ -7,7 +7,7 @@ export default function PlayerHome({ playerID }) {
   return (
     <header className="fixed flex flex-col h-full w-full justify-center items-center">
       <div className="z-2 text-center p-2">
-        <h1 className="text-center font-heading text-7xl">
+        <h1 className="text-center font-heading lg:text-7xl md:text-5xl text-4xl">
           Welcome to YoutubeOKE
         </h1>
         <p className="mt-2">
