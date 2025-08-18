@@ -59,7 +59,7 @@ app.get("/api/search/:q", limiter, async (req, res) => {
     false,
     LIMIT,
     [{ type: "video" }]
-  );
+  );  
 
   return processResponse(data, res);
 });

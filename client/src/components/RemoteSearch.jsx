@@ -10,6 +10,7 @@ import {
 import { SpinnerIcon } from "./Loader";
 import ListItem from "./ListItem";
 import ModalMenu from "./ModalMenu";
+import ErrorComponent from "./ErrorComponent";
 
 export default function RemoteSearch() {
   const { items, hasNextPage } = useLoaderData();
@@ -22,16 +23,23 @@ export default function RemoteSearch() {
   const [currentHasNextPage, setCurrentHasNextPage] = useState(hasNextPage);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [error, setError] = useState(null);
 
   const loadMoreHandler = async () => {
+    setError(null);
     setIsLoading(true);
 
-    const { items, hasNextPage } = await getNextPage();
+    try {
+      const { items, hasNextPage } = await getNextPage();
 
-    setCurrentItems((currentItems) => {
-      return [...currentItems, ...items];
-    });
-    setCurrentHasNextPage(hasNextPage);
+      setCurrentItems((currentItems) => {
+        return [...currentItems, ...items];
+      });
+      setCurrentHasNextPage(hasNextPage);
+    } catch (error) {
+      setError(error.message);
+    }
+
     setIsLoading(false);
   };
 
@@ -117,6 +125,8 @@ export default function RemoteSearch() {
                 {isLoading ? <SpinnerIcon inline={true} /> : "Load more"}
               </button>
             )}
+
+            {error && <ErrorComponent className="mt-2" message={error} />}
 
             <button
               type="button"

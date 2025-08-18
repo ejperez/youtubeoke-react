@@ -11,6 +11,7 @@ import { Spinner } from "./components/Loader.jsx";
 import RemoteFaves, {
   loader as RemoteFavesLoader,
 } from "./components/RemoteFaves.jsx";
+import ErrorComponent from "./components/ErrorComponent.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
         element: <RemoteSearch />,
         loader: RemoteSearchLoader,
         hydrateFallbackElement: <Spinner />,
+        errorElement: <ErrorComponent message="There has been a server error. Please try again later." />,
       },
     ],
   },

@@ -39,8 +39,8 @@ const processResponse = (data) => {
 };
 
 export const search = async (keyword) => {
-  const request = await fetch(`${backendAPI}/search/${keyword}`);
-  const data = await request.json();
+  const response = await fetch(`${backendAPI}/search/${keyword}`);
+  const data = await response.json();
 
   return processResponse(data);
 };
@@ -53,14 +53,19 @@ export const getNextPage = async () => {
     return defaultResponse;
   }
 
-  const request = await fetch(`${backendAPI}/search/nextPage`, {
+  const response = await fetch(`${backendAPI}/search/nextPage`, {
     method: "POST",
     body: nextPage,
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const data = await request.json();
+
+  if (response.status !== 200) {
+    throw new Error("There has been a server error. Please try again later.");
+  }
+
+  const data = await response.json();
 
   return processResponse(data);
 };
