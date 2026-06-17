@@ -1,4 +1,4 @@
-import QRCode from "react-qr-code";
+import { QRCode } from "react-qr-code";
 import { Link } from "react-router";
 
 export default function PlayerHome({ playerID }) {

@@ -38,9 +38,19 @@ export default function Player() {
     };
   }, []);
 
-  return videoID ? (
-    <PlayerFrame videoID={videoID} />
-  ) : (
-    <PlayerHome playerID={id} />
+  return (
+    <div className="bg-red-500/50 absolute inset-0">
+      {videoID ? (
+        <PlayerFrame videoID={videoID} />
+      ) : (
+        <PlayerHome playerID={id} />
+      )}
+      <div className="bg-blue-500/50 absolute bottom-0 w-full flex justify-between">
+        <div>QR code</div>
+        <div>Current song</div>
+        <div>Next song</div>
+        <div>In queue</div>
+      </div>
+    </div>
   );
 }
