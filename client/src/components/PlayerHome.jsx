@@ -24,7 +24,7 @@ export default function PlayerHome({ playerID }) {
         </p>
       </div>
       <video
-        className="absolute top-[-100px] w-auto min-w-full min-h-[120%] max-w-none opacity-50"
+        className="absolute -top-25 w-auto min-w-full min-h-[120%] max-w-none opacity-50"
         autoPlay
         loop
         muted
