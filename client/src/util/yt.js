@@ -79,3 +79,13 @@ export const playVideo = (playerID, video) => {
     },
   });
 };
+
+export const addToQueue = (playerID, video) => {
+  socket.emit("sync-event", {
+    action: "add-item",
+    payload: {
+      playerID: playerID,
+      video: video,
+    },
+  });
+};

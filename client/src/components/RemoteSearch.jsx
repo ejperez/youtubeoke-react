@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { search, getNextPage, playVideo } from "../util/yt";
+import { search, getNextPage, playVideo, addToQueue } from "../util/yt";
 import { addToFavorites } from "../util/faves";
 import {
   useLoaderData,
@@ -63,6 +63,15 @@ export default function RemoteSearch() {
       },
     },
     {
+      label: "Add to queue",
+      action: (e) => {
+        e.stopPropagation();
+
+        addToQueue(playerID, selectedVideo);
+        setSelectedVideo(null);
+      },
+    },
+    {
       label: "Add to favorites",
       action: async (e) => {
         e.stopPropagation();
@@ -103,7 +112,7 @@ export default function RemoteSearch() {
               {currentItems
                 .filter(
                   (obj, index, self) =>
-                    index === self.findIndex((o) => o.id === obj.id)
+                    index === self.findIndex((o) => o.id === obj.id),
                 )
                 .map((item) => (
                   <ListItem

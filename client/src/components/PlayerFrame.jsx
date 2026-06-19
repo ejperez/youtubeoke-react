@@ -1,6 +1,6 @@
 import YouTube from "react-youtube";
 
-export default function PlayerFrame({ videoID }) {
+export default function PlayerFrame({ videoID, onError, onEnd }) {
   const opts = {
     height: "1280",
     width: "720",
@@ -19,6 +19,13 @@ export default function PlayerFrame({ videoID }) {
       videoId={videoID}
       opts={opts}
       iframeClassName="h-full w-full"
+      onReady={console.log("ready")}
+      onStateChange={(event) => {
+        if (event.data === 0) {
+          onEnd();
+        }
+      }}
+      onError={onError}
     />
   );
 }

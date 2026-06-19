@@ -9,9 +9,25 @@ import { Link } from "react-router";
 export default function Player() {
   const id = useMemo(generateCode, []);
   const socket = getSocket();
-  const [videoID, setVideoID] = useState(null);
+  const [currentVideo, setCurrentVideo] = useState(null);
   const [queue, setQueue] = useState([]);
   const remoteLink = `${document.location.href}${id}/remote`;
+
+  const playNextInQueue = () => {
+    if (queue.length > 0) {
+      setCurrentVideo(queue[0]);
+      setQueue((queue) => queue.slice(1));
+    } else {
+      setCurrentVideo(null);
+    }
+  };
+
+  // Autoplay first item in queue if nothing is playing
+  useEffect(() => {
+    if (!currentVideo) {
+      playNextInQueue();
+    }
+  }, [queue, currentVideo]);
 
   useEffect(() => {
     socket.on("sync-event", (data) => {
@@ -31,7 +47,20 @@ export default function Player() {
             },
           });
 
-          setVideoID(data.payload.video.id);
+          setCurrentVideo(data.payload.video);
+
+          break;
+        case "add-item":
+          setQueue((queue) => [...queue, data.payload.video]);
+
+          socket.emit("sync-event", {
+            action: "queue-update",
+            payload: {
+              playerID: data.payload.playerID,
+              queue: queue,
+              currentVideo: currentVideo,
+            },
+          });
 
           break;
       }
@@ -44,18 +73,31 @@ export default function Player() {
 
   return (
     <div className="absolute inset-0">
-      {videoID ? (
-        <PlayerFrame videoID={videoID} />
+      {currentVideo ? (
+        <PlayerFrame
+          videoID={currentVideo.id}
+          onEnd={playNextInQueue}
+          onError={playNextInQueue}
+        />
       ) : (
         <PlayerHome playerID={id} />
       )}
       <div className="font-heading text-lg absolute top-0 w-full flex justify-between p-1 z-50 bg-black/75">
-        <div className="grow flex w-full">Current song: Nothing</div>
-        <div className="grow flex w-full">Next song: Nothing</div>
-        <div className="w-72 text-right">In queue: {queue.length}</div>
+        <div className="grow flex w-full truncate">
+          <span className="text-green-500 pr-1">Current song:</span>
+          {currentVideo?.title || "Nothing"}
+        </div>
+        <div className="grow flex w-full pl-2 truncate">
+          <span className="text-yellow-500 pr-1">Next song:</span>
+          {queue[0]?.title || "Nothing"}
+        </div>
+        <div className="w-72 text-right">
+          <span className="text-red-500 pr-1">In queue:</span>
+          {queue.length}
+        </div>
       </div>
 
-      {videoID && (
+      {currentVideo && (
         <div className="absolute bottom-0 z-50 opacity-5 hover:opacity-100 w-full p-1">
           <QRCode
             className="p-1 rounded-xl bg-white size-52"
