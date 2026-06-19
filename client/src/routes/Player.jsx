@@ -22,6 +22,18 @@ export default function Player() {
     }
   };
 
+  // Broadcast queue and currently playing video info
+  useEffect(() => {
+    socket.emit("sync-event", {
+      action: "queue-update",
+      payload: {
+        playerID: id,
+        queue,
+        currentVideo,
+      },
+    });
+  }, [queue, currentVideo]);
+
   // Autoplay first item in queue if nothing is playing
   useEffect(() => {
     if (!currentVideo) {
@@ -31,36 +43,19 @@ export default function Player() {
 
   useEffect(() => {
     socket.on("sync-event", (data) => {
+      if (id !== data.payload.playerID) {
+        return;
+      }
+
       console.log(data);
 
       switch (data.action) {
         case "play-item":
-          if (id !== data.payload.playerID) {
-            return;
-          }
-
-          socket.emit("sync-event", {
-            action: "playing-item",
-            payload: {
-              playerID: data.payload.playerID,
-              videoID: data.payload.video.id,
-            },
-          });
-
           setCurrentVideo(data.payload.video);
 
           break;
         case "add-item":
           setQueue((queue) => [...queue, data.payload.video]);
-
-          socket.emit("sync-event", {
-            action: "queue-update",
-            payload: {
-              playerID: data.payload.playerID,
-              queue: queue,
-              currentVideo: currentVideo,
-            },
-          });
 
           break;
       }
