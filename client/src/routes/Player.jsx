@@ -7,7 +7,7 @@ import { QRCode } from "react-qr-code";
 import { Link } from "react-router";
 
 export default function Player() {
-  const id = "12345"; //TODO: useMemo(generateCode, []);
+  const id = useMemo(generateCode, []);
   const socket = getSocket();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [queue, setQueue] = useState([]);
