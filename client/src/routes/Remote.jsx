@@ -2,13 +2,21 @@ import { useParams, useSearchParams, Outlet, Link, Form } from "react-router";
 import Loader from "../components/Loader";
 import { useRef, useState } from "react";
 import { cn } from "../util/util";
+import { useLocation } from "react-router";
 
 export default function Remote() {
   const { playerID } = useParams();
   const [searchParams, _] = useSearchParams();
   const keyword = searchParams.get("keyword");
   const keywordField = useRef(null);
-  const [currentView, setCurrentView] = useState("faves");
+  const location = useLocation();
+  const [currentView, setCurrentView] = useState(
+    location.pathname.includes("/search")
+      ? "search"
+      : location.pathname.includes("/queue")
+        ? "queue"
+        : "faves",
+  );
 
   return (
     <>

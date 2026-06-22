@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { generateCode } from "../util/util";
 import { getSocket } from "../util/socket";
 import PlayerFrame from "../components/PlayerFrame";
@@ -7,11 +7,18 @@ import { QRCode } from "react-qr-code";
 import { Link } from "react-router";
 
 export default function Player() {
-  const id = useMemo(generateCode, []);
+  const id = "12345"; //TODO: useMemo(generateCode, []);
   const socket = getSocket();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [queue, setQueue] = useState([]);
   const remoteLink = `${document.location.href}${id}/remote`;
+  const queueRef = useRef(queue);
+  const currentVideoRef = useRef(currentVideo);
+
+  useEffect(() => {
+    queueRef.current = queue;
+    currentVideoRef.current = currentVideo;
+  }, [queue, currentVideo]);
 
   const playNextInQueue = () => {
     if (queue.length > 0) {
@@ -22,23 +29,26 @@ export default function Player() {
     }
   };
 
-  // Broadcast queue and currently playing video info
-  useEffect(() => {
+  const broadcastQueue = () => {
     socket.emit("sync-event", {
-      action: "queue-update",
+      action: "current-queue",
       payload: {
         playerID: id,
-        queue,
-        currentVideo,
+        queue: queueRef.current,
+        currentVideo: currentVideoRef.current,
       },
     });
-  }, [queue, currentVideo]);
+  };
 
   // Autoplay first item in queue if nothing is playing
   useEffect(() => {
     if (!currentVideo) {
       playNextInQueue();
     }
+  }, [queue, currentVideo]);
+
+  useEffect(() => {
+    broadcastQueue();
   }, [queue, currentVideo]);
 
   useEffect(() => {
@@ -54,8 +64,18 @@ export default function Player() {
           setCurrentVideo(data.payload.video);
 
           break;
-        case "add-item":
+        case "add-to-queue":
           setQueue((queue) => [...queue, data.payload.video]);
+
+          break;
+        case "get-queue":
+          broadcastQueue();
+
+          break;
+        case "remove-from-queue":
+          setQueue((queue) =>
+            queue.filter((item) => item.id !== data.payload.video.id),
+          );
 
           break;
       }

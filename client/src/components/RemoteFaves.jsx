@@ -4,6 +4,7 @@ import ListItem from "./ListItem";
 import { useState } from "react";
 import ModalMenu from "./ModalMenu";
 import { playVideo } from "../util/yt";
+import { addToQueue } from "../util/yt";
 
 export default function RemoteFaves() {
   const faves = useLoaderData();
@@ -24,6 +25,15 @@ export default function RemoteFaves() {
         e.stopPropagation();
 
         playVideo(playerID, selectedVideo);
+        setSelectedVideo(null);
+      },
+    },
+    {
+      label: "Add to queue",
+      action: (e) => {
+        e.stopPropagation();
+
+        addToQueue(playerID, selectedVideo);
         setSelectedVideo(null);
       },
     },

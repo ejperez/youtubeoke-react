@@ -26,7 +26,7 @@ const processResponse = (data) => {
   if (hasNextPage) {
     sessionStorage.setItem(
       "nextPage",
-      JSON.stringify({ nextPage: data.nextPage })
+      JSON.stringify({ nextPage: data.nextPage }),
     );
   } else {
     sessionStorage.removeItem("nextPage");
@@ -82,10 +82,29 @@ export const playVideo = (playerID, video) => {
 
 export const addToQueue = (playerID, video) => {
   socket.emit("sync-event", {
-    action: "add-item",
+    action: "add-to-queue",
     payload: {
       playerID: playerID,
       video: video,
+    },
+  });
+};
+
+export const removeFromQueue = (playerID, video) => {
+  socket.emit("sync-event", {
+    action: "remove-from-queue",
+    payload: {
+      playerID: playerID,
+      video: video,
+    },
+  });
+};
+
+export const getQueue = (playerID, video) => {
+  socket.emit("sync-event", {
+    action: "get-queue",
+    payload: {
+      playerID: playerID,
     },
   });
 };
