@@ -11,6 +11,7 @@ export default function Player() {
   const socket = getSocket();
   const [currentVideo, setCurrentVideo] = useState(null);
   const [queue, setQueue] = useState([]);
+  const [hasError, setHasError] = useState(false);
   const remoteLink = `${document.location.href}${id}/remote`;
   const queueRef = useRef(queue);
   const currentVideoRef = useRef(currentVideo);
@@ -38,6 +39,15 @@ export default function Player() {
         currentVideo: currentVideoRef.current,
       },
     });
+  };
+
+  const handleError = () => {
+    setHasError(true);
+
+    setTimeout(() => {
+      setHasError(false);
+      playNextInQueue();
+    }, 5000);
   };
 
   // Autoplay first item in queue if nothing is playing
@@ -92,11 +102,12 @@ export default function Player() {
         <PlayerFrame
           videoID={currentVideo.id}
           onEnd={playNextInQueue}
-          onError={playNextInQueue}
+          onError={handleError}
         />
       ) : (
         <PlayerHome playerID={id} />
       )}
+
       <div className="font-heading text-lg absolute top-0 w-full flex justify-between p-1 z-50 bg-black/75">
         <div className="grow flex w-full truncate">
           <span className="text-green-500 pr-1">Current song:</span>
@@ -111,6 +122,13 @@ export default function Player() {
           {queue.length}
         </div>
       </div>
+
+      {hasError && currentVideo && (
+        <div className="absolute top-1/2 w-full text-2xl bg-red-800 text-center py-2">
+          Cannot play song: "{currentVideo.title}"<br />
+          Skipping in 5s.
+        </div>
+      )}
 
       {currentVideo && (
         <div className="absolute bottom-0 z-50 opacity-5 hover:opacity-100 w-full p-1">
