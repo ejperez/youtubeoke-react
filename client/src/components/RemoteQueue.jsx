@@ -92,16 +92,16 @@ export default function RemoteQueue() {
         />
       )}
 
-      <div className="pr-2 pl-2">
-        <div className="text-center pb-2 text-2xl">Now playing</div>
+      <div className="px-4">
+        <div className="pb-2 text-sm font-bold">NOW PLAYING</div>
         <ul className="flex flex-col gap-2">
           {currentVideo ? (
             [currentVideo].map((item) => <ListItem key={item.id} item={item} />)
           ) : (
-            <div className="text-center pb-2">Nothing</div>
+            <div className="italic">Nothing</div>
           )}
         </ul>
-        <div className="text-center py-2">In queue</div>
+        <div className="pb-2 pt-4 text-sm font-bold">IN QUEUE</div>
         <ul className="flex flex-col gap-2">
           {currentQueue && currentQueue.length > 0 ? (
             currentQueue.map((item) => (
@@ -113,7 +113,7 @@ export default function RemoteQueue() {
               />
             ))
           ) : (
-            <div className="text-center pb-2">Nothing</div>
+            <div className="italic">Nothing</div>
           )}
         </ul>
       </div>

@@ -1,10 +1,12 @@
 import { useParams, useSearchParams, Outlet, Link, Form } from "react-router";
 import Loader from "../components/Loader";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { cn } from "../util/util";
 import { useLocation } from "react-router";
+import { getSocket } from "../util/socket";
 
 export default function Remote() {
+  const socket = getSocket();
   const { playerID } = useParams();
   const [searchParams, _] = useSearchParams();
   const keyword = searchParams.get("keyword");
@@ -17,6 +19,35 @@ export default function Remote() {
         ? "queue"
         : "faves",
   );
+  const [queueCount, setQueueCount] = useState(0);
+
+  useEffect(() => {
+    socket.on("sync-event", (data) => {
+      if (String(playerID) !== data.payload.playerID) {
+        return;
+      }
+
+      switch (data.action) {
+        case "current-queue":
+          setQueueCount(
+            data.payload.queue.length + (data.payload.currentVideo ? 1 : 0),
+          );
+
+          break;
+      }
+    });
+
+    socket.emit("sync-event", {
+      action: "get-queue",
+      payload: {
+        playerID: playerID,
+      },
+    });
+
+    return () => {
+      socket.off("sync-event");
+    };
+  }, []);
 
   return (
     <>
@@ -94,6 +125,16 @@ export default function Remote() {
               setCurrentView("queue");
             }}
           >
+            <div
+              className={cn(
+                "bg-white text-black absolute right-2 top-2 border-black border-2 rounded-full text-xs font-bold px-1",
+                {
+                  "bg-black text-white border-white": currentView === "queue",
+                },
+              )}
+            >
+              {queueCount}
+            </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

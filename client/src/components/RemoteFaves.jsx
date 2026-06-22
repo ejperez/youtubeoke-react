@@ -67,24 +67,22 @@ export default function RemoteFaves() {
         />
       )}
 
-      <div className="pr-2 pl-2">
-        {currentFaves.length === 0 ? (
-          <p className="text-center">No favorites added yet</p>
-        ) : (
-          <>
-            <div className="text-center pb-2">Your favorites</div>
-            <ul className="flex flex-col gap-2">
-              {currentFaves.map((item) => (
-                <ListItem
-                  key={item.id}
-                  clickHandler={listClickHandler}
-                  item={item}
-                  isActive={item.id === selectedVideo?.id}
-                />
-              ))}
-            </ul>
-          </>
-        )}
+      <div className="px-4">
+        <div className="pb-2 text-sm font-bold">YOUR FAVORITES</div>
+        <ul className="flex flex-col gap-2">
+          {currentFaves.length > 0 ? (
+            currentFaves.map((item) => (
+              <ListItem
+                key={item.id}
+                clickHandler={listClickHandler}
+                item={item}
+                isActive={item.id === selectedVideo?.id}
+              />
+            ))
+          ) : (
+            <div className="italic">No favorites added yet</div>
+          )}
+        </ul>
       </div>
     </>
   );

@@ -101,12 +101,12 @@ export default function RemoteSearch() {
         />
       )}
 
-      <div className="px-2 pb-2">
+      <div className="px-4">
         {currentItems.length === 0 ? (
-          <p>No results.</p>
+          <div className="pb-2 text-sm font-bold">NO RESULTS</div>
         ) : (
           <>
-            <div className="text-center pb-2">Search results</div>
+            <div className="pb-2 text-sm font-bold">SEARCH RESULTS</div>
 
             <ul className="flex flex-col gap-2">
               {currentItems
