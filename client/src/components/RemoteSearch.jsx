@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { search, getNextPage, playVideo } from "../util/yt";
+import { search, getNextPage, playVideo, addToQueue } from "../util/yt";
 import { addToFavorites } from "../util/faves";
 import {
   useLoaderData,
@@ -63,6 +63,15 @@ export default function RemoteSearch() {
       },
     },
     {
+      label: "Add to queue",
+      action: (e) => {
+        e.stopPropagation();
+
+        addToQueue(playerID, selectedVideo);
+        setSelectedVideo(null);
+      },
+    },
+    {
       label: "Add to favorites",
       action: async (e) => {
         e.stopPropagation();
@@ -92,18 +101,18 @@ export default function RemoteSearch() {
         />
       )}
 
-      <div className="px-2 pb-2">
+      <div className="px-4">
         {currentItems.length === 0 ? (
-          <p>No results.</p>
+          <div className="pb-2 text-sm font-bold">NO RESULTS</div>
         ) : (
           <>
-            <div className="text-center pb-2">Search results</div>
+            <div className="pb-2 text-sm font-bold">SEARCH RESULTS</div>
 
             <ul className="flex flex-col gap-2">
               {currentItems
                 .filter(
                   (obj, index, self) =>
-                    index === self.findIndex((o) => o.id === obj.id)
+                    index === self.findIndex((o) => o.id === obj.id),
                 )
                 .map((item) => (
                   <ListItem
@@ -146,5 +155,5 @@ export async function loader({ request }) {
   const [, searchParams] = request.url.split("?");
   const keyword = new URLSearchParams(searchParams).get("keyword");
 
-  return await search(keyword);
+  return await search(keyword + " karaoke");
 }

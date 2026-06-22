@@ -11,6 +11,7 @@ import { Spinner } from "./components/Loader.jsx";
 import RemoteFaves, {
   loader as RemoteFavesLoader,
 } from "./components/RemoteFaves.jsx";
+import RemoteQueue from "./components/RemoteQueue.jsx";
 import ErrorComponent from "./components/ErrorComponent.jsx";
 
 const router = createBrowserRouter([
@@ -33,7 +34,13 @@ const router = createBrowserRouter([
         element: <RemoteSearch />,
         loader: RemoteSearchLoader,
         hydrateFallbackElement: <Spinner />,
-        errorElement: <ErrorComponent message="There has been a server error. Please try again later." />,
+        errorElement: (
+          <ErrorComponent message="There has been a server error. Please try again later." />
+        ),
+      },
+      {
+        path: "/:playerID/remote/queue",
+        element: <RemoteQueue />,
       },
     ],
   },
@@ -45,7 +52,7 @@ if (storageSupport) {
   createRoot(document.getElementById("root")).render(
     <StrictMode>
       <RouterProvider router={router} />
-    </StrictMode>
+    </StrictMode>,
   );
 } else {
   document.writeln("This app needs local and session storage features.");
