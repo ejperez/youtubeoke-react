@@ -87,11 +87,6 @@ export default function RemoteSearch() {
     },
   ];
 
-  const favoritesClickHandler = () => {
-    clearKeyword();
-    navigate(`/${playerID}/remote`);
-  };
-
   return (
     <>
       {selectedVideo && (
@@ -136,14 +131,6 @@ export default function RemoteSearch() {
             )}
 
             {error && <ErrorComponent className="mt-2" message={error} />}
-
-            <button
-              type="button"
-              className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
-              onClick={favoritesClickHandler}
-            >
-              Back to favorites
-            </button>
           </>
         )}
       </div>
