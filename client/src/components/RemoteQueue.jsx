@@ -1,7 +1,7 @@
 import { useLoaderData, useParams } from "react-router";
+import List from "./List";
 import ListItem from "./ListItem";
 import { useState, useEffect } from "react";
-import ModalMenu from "./ModalMenu";
 import { playVideo } from "../util/yt";
 import { addToFavorites } from "../util/faves";
 import { getSocket } from "../util/socket";
@@ -84,39 +84,23 @@ export default function RemoteQueue() {
   };
 
   return (
-    <>
-      {selectedVideo && (
-        <ModalMenu
-          modalCancelHandler={modalCancelHandler}
-          menuOptions={menuOptions}
-        />
-      )}
-
-      <div className="px-4">
-        <div className="pb-2 text-sm font-bold">NOW PLAYING</div>
-        <ul className="flex flex-col gap-2">
-          {currentVideo ? (
-            [currentVideo].map((item) => <ListItem key={item.id} item={item} />)
-          ) : (
-            <div className="italic">Nothing</div>
-          )}
-        </ul>
-        <div className="pb-2 pt-4 text-sm font-bold">IN QUEUE</div>
-        <ul className="flex flex-col gap-2">
-          {currentQueue && currentQueue.length > 0 ? (
-            currentQueue.map((item) => (
-              <ListItem
-                key={item.id}
-                clickHandler={listClickHandler}
-                item={item}
-                isActive={item.id === selectedVideo?.id}
-              />
-            ))
-          ) : (
-            <div className="italic">Nothing</div>
-          )}
-        </ul>
-      </div>
-    </>
+    <div className="px-4">
+      <div className="pb-2 text-sm font-bold">NOW PLAYING</div>
+      <ul className="flex flex-col gap-2">
+        {currentVideo ? (
+          [currentVideo].map((item) => <ListItem key={item.id} item={item} />)
+        ) : (
+          <div className="italic">Nothing</div>
+        )}
+      </ul>
+      <div className="pb-2 pt-4 text-sm font-bold">IN QUEUE</div>
+      <List
+        items={currentQueue}
+        selectedItem={selectedVideo}
+        menuOptions={menuOptions}
+        onSelect={listClickHandler}
+        emptyMessage="Nothing"
+      />
+    </div>
   );
 }

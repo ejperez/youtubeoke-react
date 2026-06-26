@@ -1,10 +1,15 @@
-export default function ListItem({ item, clickHandler, isActive }) {
+import { cn } from "../util/util";
+
+export default function ListItem({ item, clickHandler, isActive, options }) {
   return (
-    <li      
-      style={{ backgroundImage: `url(${item.image})` }}
-      className={`bg-cover relative rounded-2xl ${isActive && "active"}`}
+    <li
+      className={cn(
+        "bg-cover relative rounded-2xl transform transition-transform duration-300 ease-in-out",
+        {
+          "-translate-x-full": isActive,
+        },
+      )}
     >
-      <div className="backdrop-blur-sm backdrop-brightness-20 absolute top-0 left-0 w-full h-full rounded-2xl"></div>
       <button
         className="relative flex gap-2 p-2 bg-white/20 w-full rounded-2xl"
         type="button"
@@ -30,6 +35,24 @@ export default function ListItem({ item, clickHandler, isActive }) {
           <em className="text-xs">{item.channel}</em>
         </div>
       </button>
+
+      {options && (
+        <div className="absolute top-0 -right-full flex flex-wrap gap-2 w-full h-full">
+          {options.map((item) => (
+            <button
+              key={item.label}
+              onClick={(e) => {
+                setTimeout(() => {
+                  item.action(e);
+                }, 200);
+              }}
+              className="flex-1 bg-white/20 text-white rounded-2xl text-md active:bg-white active:text-black"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
     </li>
   );
 }

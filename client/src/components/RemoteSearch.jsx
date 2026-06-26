@@ -8,8 +8,7 @@ import {
   useParams,
 } from "react-router";
 import { SpinnerIcon } from "./Loader";
-import ListItem from "./ListItem";
-import ModalMenu from "./ModalMenu";
+import List from "./List";
 import ErrorComponent from "./ErrorComponent";
 
 export default function RemoteSearch() {
@@ -88,53 +87,38 @@ export default function RemoteSearch() {
   ];
 
   return (
-    <>
-      {selectedVideo && (
-        <ModalMenu
-          modalCancelHandler={modalCancelHandler}
-          menuOptions={menuOptions}
-        />
-      )}
+    <div className="px-4">
+      {currentItems.length === 0 ? (
+        <div className="pb-2 text-sm font-bold">NO RESULTS</div>
+      ) : (
+        <>
+          <div className="pb-2 text-sm font-bold">SEARCH RESULTS</div>
 
-      <div className="px-4">
-        {currentItems.length === 0 ? (
-          <div className="pb-2 text-sm font-bold">NO RESULTS</div>
-        ) : (
-          <>
-            <div className="pb-2 text-sm font-bold">SEARCH RESULTS</div>
-
-            <ul className="flex flex-col gap-2">
-              {currentItems
-                .filter(
-                  (obj, index, self) =>
-                    index === self.findIndex((o) => o.id === obj.id),
-                )
-                .map((item) => (
-                  <ListItem
-                    key={item.id}
-                    clickHandler={listClickHandler}
-                    item={item}
-                    isActive={item.id === selectedVideo?.id}
-                  />
-                ))}
-            </ul>
-
-            {currentHasNextPage && (
-              <button
-                className="w-full p-2 bg-white/50 my-2 rounded-2xl"
-                type="button"
-                onClick={loadMoreHandler}
-                disabled={isLoading}
-              >
-                {isLoading ? <SpinnerIcon inline={true} /> : "Load more"}
-              </button>
+          <List
+            items={currentItems.filter(
+              (obj, index, self) =>
+                index === self.findIndex((o) => o.id === obj.id),
             )}
+            selectedItem={selectedVideo}
+            menuOptions={menuOptions}
+            onSelect={listClickHandler}
+          />
 
-            {error && <ErrorComponent className="mt-2" message={error} />}
-          </>
-        )}
-      </div>
-    </>
+          {currentHasNextPage && (
+            <button
+              className="w-full p-2 bg-white/50 my-2 rounded-2xl"
+              type="button"
+              onClick={loadMoreHandler}
+              disabled={isLoading}
+            >
+              {isLoading ? <SpinnerIcon inline={true} /> : "Load more"}
+            </button>
+          )}
+
+          {error && <ErrorComponent className="mt-2" message={error} />}
+        </>
+      )}
+    </div>
   );
 }
 

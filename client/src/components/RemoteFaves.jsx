@@ -1,10 +1,9 @@
 import { useLoaderData, useParams } from "react-router";
 import { getFavorites, removeFromFavorites } from "../util/faves";
-import ListItem from "./ListItem";
 import { useState } from "react";
-import ModalMenu from "./ModalMenu";
 import { playVideo } from "../util/yt";
 import { addToQueue } from "../util/yt";
+import List from "./List";
 
 export default function RemoteFaves() {
   const faves = useLoaderData();
@@ -59,32 +58,15 @@ export default function RemoteFaves() {
   };
 
   return (
-    <>
-      {selectedVideo && (
-        <ModalMenu
-          modalCancelHandler={modalCancelHandler}
-          menuOptions={menuOptions}
-        />
-      )}
-
-      <div className="px-4">
-        <div className="pb-2 text-sm font-bold">YOUR FAVORITES</div>
-        <ul className="flex flex-col gap-2">
-          {currentFaves.length > 0 ? (
-            currentFaves.map((item) => (
-              <ListItem
-                key={item.id}
-                clickHandler={listClickHandler}
-                item={item}
-                isActive={item.id === selectedVideo?.id}
-              />
-            ))
-          ) : (
-            <div className="italic">No favorites added yet</div>
-          )}
-        </ul>
-      </div>
-    </>
+    <div className="px-4">
+      <div className="pb-2 text-sm font-bold">YOUR FAVORITES</div>
+      <List
+        items={currentFaves}
+        selectedItem={selectedVideo}
+        menuOptions={menuOptions}
+        onSelect={listClickHandler}
+      />
+    </div>
   );
 }
 
