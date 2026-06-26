@@ -121,7 +121,7 @@ export default function RemoteSearch() {
 
             {currentHasNextPage && (
               <button
-                className="w-full p-2 bg-white/25 mt-2 rounded-2xl"
+                className="w-full p-2 bg-white/50 my-2 rounded-2xl"
                 type="button"
                 onClick={loadMoreHandler}
                 disabled={isLoading}
