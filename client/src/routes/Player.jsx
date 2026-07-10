@@ -131,9 +131,9 @@ export default function Player() {
       )}
 
       {currentVideo && (
-        <div className="absolute bottom-0 z-50 opacity-5 hover:opacity-100 w-full p-1">
+        <div className="absolute bottom-0 z-50 w-full p-1">
           <QRCode
-            className="p-1 rounded-xl bg-white size-52"
+            className="p-1 rounded-xl bg-white size-24"
             value={remoteLink}
           />
         </div>

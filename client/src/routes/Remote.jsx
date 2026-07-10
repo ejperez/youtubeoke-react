@@ -49,6 +49,10 @@ export default function Remote() {
     };
   }, []);
 
+  const handleSubmit = (e) => {
+    keywordField.current.blur();
+  };
+
   return (
     <>
       <div className="flex fixed top-0 z-1 w-full bg-black/50 p-2">
@@ -57,6 +61,7 @@ export default function Remote() {
             action={`/${playerID}/remote/search`}
             method="get"
             className="relative z-3"
+            onSubmit={handleSubmit}
           >
             <input
               className={cn(
