@@ -12,7 +12,7 @@ export default function Player() {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [queue, setQueue] = useState([]);
   const [hasError, setHasError] = useState(false);
-  const remoteLink = `${document.location.href}${id}/remote`;
+  const remoteLink = `${document.location.href}/#${id}/remote`;
   const queueRef = useRef(queue);
   const currentVideoRef = useRef(currentVideo);
 

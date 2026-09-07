@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createHashRouter, RouterProvider } from "react-router";
 import Player from "./routes/Player.jsx";
 import Remote from "./routes/Remote.jsx";
 import RemoteSearch, {
@@ -14,7 +14,7 @@ import RemoteFaves, {
 import RemoteQueue from "./components/RemoteQueue.jsx";
 import ErrorComponent from "./components/ErrorComponent.jsx";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Player />,
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-], { basename: "/youtubeoke-react/" });
+]);
 
 const storageSupport = "localStorage" in window && "sessionStorage" in window;
 

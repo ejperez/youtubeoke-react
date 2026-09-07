@@ -2,7 +2,8 @@ import { QRCode } from "react-qr-code";
 import { Link } from "react-router";
 
 export default function PlayerHome({ playerID }) {
-  const remoteLink = `${document.location.href}${playerID}/remote`;
+  const remoteLink = `${document.location.href}#/${playerID}/remote`;
+  const videoURL = `${import.meta.env.BASE_URL}video.mp4`;
 
   return (
     <header className="fixed flex flex-col h-full w-full justify-center items-center">
@@ -29,7 +30,7 @@ export default function PlayerHome({ playerID }) {
         loop
         muted
       >
-        <source src="/video.mp4" type="video/mp4" />
+        <source src={videoURL} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </header>
