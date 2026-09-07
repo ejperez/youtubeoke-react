@@ -44,7 +44,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+], { basename: "/youtubeoke-react/" });
 
 const storageSupport = "localStorage" in window && "sessionStorage" in window;
 
